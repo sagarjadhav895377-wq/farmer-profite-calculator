@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>शेतकरी नफा Calculator</title>
+<meta name="description" content="शेतीचा एकूण खर्च, उत्पन्न आणि नफा सहज काढण्यासाठी मोफत शेतकरी नफा Calculator.">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Devanagari",sans-serif;background:#f4f8f3;color:#17351d}
+header{background:#237a3b;color:white;padding:22px 15px;text-align:center}
+header h1{margin:0 0 6px;font-size:28px}header p{margin:0;opacity:.92}
+.container{max-width:850px;margin:20px auto;padding:0 14px}
+.card{background:white;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 3px 14px #00000012}
+h2{margin-top:0;font-size:21px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+label{font-weight:600;font-size:14px;display:block;margin-bottom:6px}
+input{width:100%;padding:12px;border:1px solid #cbd8cc;border-radius:9px;font-size:16px}
+button{width:100%;border:0;border-radius:10px;padding:14px;background:#237a3b;color:white;font-size:18px;font-weight:bold;cursor:pointer}
+button:hover{background:#195f2d}
+.results{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.result{padding:16px;border-radius:12px;background:#eef8ef;text-align:center}
+.result small{display:block;color:#52705a}.result strong{font-size:24px;display:block;margin-top:5px}
+#profit{color:#17752e}#loss{color:#b3261e}
+.note{font-size:13px;color:#607264;line-height:1.5}
+footer{text-align:center;padding:25px;color:#647266;font-size:13px}
+@media(max-width:600px){.grid,.results{grid-template-columns:1fr}header h1{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+<h1>🌱 शेतकरी नफा Calculator</h1>
+<p>तुमच्या पिकाचा खर्च, उत्पन्न आणि अंदाजे नफा एका मिनिटात काढा</p>
+</header>
+
+<div class="container">
+<div class="card">
+<h2>📋 पिकाची माहिती</h2>
+<div class="grid">
+<div><label>क्षेत्रफळ (एकर)</label><input id="acre" type="number" value="1" min="0"></div>
+<div><label>उत्पादन (किलो/एकर)</label><input id="yield" type="number" value="10000" min="0"></div>
+<div><label>विक्री दर (₹/किलो)</label><input id="price" type="number" value="20" min="0"></div>
+<div><label>बियाणे खर्च (₹/एकर)</label><input id="seed" type="number" value="5000" min="0"></div>
+<div><label>खत खर्च (₹/एकर)</label><input id="fert" type="number" value="12000" min="0"></div>
+<div><label>औषध/फवारणी (₹/एकर)</label><input id="spray" type="number" value="8000" min="0"></div>
+<div><label>मजुरी (₹/एकर)</label><input id="labor" type="number" value="15000" min="0"></div>
+<div><label>पाणी/वीज/डिझेल (₹/एकर)</label><input id="water" type="number" value="5000" min="0"></div>
+<div><label>इतर खर्च (₹/एकर)</label><input id="other" type="number" value="5000" min="0"></div>
+</div>
+<br>
+<button onclick="calculate()">नफा Calculate करा</button>
+</div>
+
+<div class="card">
+<h2>📊 तुमचा निकाल</h2>
+<div class="results">
+<div class="result"><small>एकूण उत्पादन</small><strong id="outYield">-</strong></div>
+<div class="result"><small>एकूण उत्पन्न</small><strong id="income">-</strong></div>
+<div class="result"><small>एकूण खर्च</small><strong id="cost">-</strong></div>
+</div>
+<br>
+<div class="result">
+<small>अंदाजे निव्वळ नफा / तोटा</small>
+<strong id="profit">-</strong>
+</div>
+<p class="note">टीप: हा calculator अंदाजासाठी आहे. बाजारभाव, उत्पादन, मजुरी आणि इतर प्रत्यक्ष खर्च बदलू शकतात.</p>
+</div>
+
+<div class="card">
+<h2>💡 हा tool कसा वापरायचा?</h2>
+<p>तुमच्या पिकाचे क्षेत्रफळ, अपेक्षित उत्पादन, विक्री दर आणि प्रति एकर खर्च भरा. Calculator एकूण उत्पन्न, खर्च आणि अंदाजे निव्वळ नफा दाखवेल.</p>
+</div>
+</div>
+
+<footer>© 2026 Farmer Profit Calculator • Free Agricultural Tool</footer>
+
+<script>
+function n(id){return Number(document.getElementById(id).value)||0}
+function money(x){return "₹"+Math.round(x).toLocaleString("en-IN")}
+function calculate(){
+ const acre=n("acre"), y=n("yield"), price=n("price");
+ const totalYield=acre*y;
+ const income=totalYield*price;
+ const perAcre=n("seed")+n("fert")+n("spray")+n("labor")+n("water")+n("other");
+ const cost=acre*perAcre;
+ const profit=income-cost;
+ document.getElementById("outYield").textContent=Math.round(totalYield).toLocaleString("en-IN")+" kg";
+ document.getElementById("income").textContent=money(income);
+ document.getElementById("cost").textContent=money(cost);
+ const p=document.getElementById("profit");
+ p.textContent=(profit>=0?money(profit):"-"+money(Math.abs(profit)));
+ p.id=profit>=0?"profit":"loss";
+}
+calculate();
+</script>
+</body>
+</html>
